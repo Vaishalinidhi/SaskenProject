@@ -31,6 +31,7 @@
     <script>
         function goToEmployerLogin() {
             window.location.href = "employer_login.jsp";
+            
         }
     </script>
 </head>

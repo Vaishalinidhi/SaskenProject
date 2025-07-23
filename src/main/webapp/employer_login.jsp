@@ -26,6 +26,7 @@
             margin-top: 20px; width: 100%; background-color: #007bff;
             color: white; border: none; padding: 10px; border-radius: 4px;
             cursor: pointer; font-size: 16px;
+            
         }
     </style>
     <script>

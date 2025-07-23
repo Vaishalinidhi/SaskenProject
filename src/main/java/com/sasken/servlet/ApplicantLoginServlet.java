@@ -21,5 +21,6 @@ public class ApplicantLoginServlet extends HttpServlet {
         session.setAttribute("applicantEmail", email);
 
         response.sendRedirect("jobPortal.jsp");
+        
     }
 }
