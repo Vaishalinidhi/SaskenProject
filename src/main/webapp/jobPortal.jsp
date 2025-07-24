@@ -312,9 +312,18 @@
             }
 
             const nextBtn = document.createElement('button');
-            nextBtn.innerText = 'Next';
-            nextBtn.className = 'next-btn'; 
-            nextBtn.onclick = () => handleNext(q);
+            nextBtn.className = 'next-btn';
+
+            if (current === questions.length - 1) {
+                nextBtn.innerText = 'Close';
+                nextBtn.onclick = () => {
+                    document.getElementById("chatbot").classList.add('hidden');
+                };
+            } else {
+                nextBtn.innerText = 'Next';
+                nextBtn.onclick = () => handleNext(q);
+            }
+
             inputDiv.appendChild(nextBtn);
 
             container.appendChild(inputDiv);
@@ -334,9 +343,11 @@
         } else if (q.input === 'file') {
             const fileInput = document.getElementById(`input-${q.name}`);
             if (fileInput && fileInput.files.length > 0) {
-                value = fileInput.files[0].name;
+                value = fileInput.files[0].name;  // or fileInput.files[0] if needed
+            } else {
+                alert("Please upload your resume to continue.");
+                return;
             }
-
         } else if (q.input) {
             value = document.getElementById(`input-${q.name}`).value;
         }
