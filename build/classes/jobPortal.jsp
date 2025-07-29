@@ -41,25 +41,40 @@
         margin-bottom: 15px;
     }
 
-    .chat-msg p {
-    margin: 0;
-    background: rgba(255, 255, 255, 0.8); /* translucent white */
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: #222; /* make text visible */
-    max-width: 80%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    font-size: 15px;
-    line-height: 1.5;
-    animation: fadeIn 0.3s ease-in-out;
+    .chat-msg {
+  display: flex;
+  margin: 8px 0;
+  max-width: 90%;
 }
-    
 
-    .chat-input {
-    margin-top: 15px;
-    margin-bottom: 30px;
-    padding: 10px;
+.chat-msg.bot {
+  justify-content: flex-start;
+}
+
+.chat-msg.user {
+  justify-content: flex-end;
+}
+
+.chat-msg p {
+  padding: 10px 15px;
+  border-radius: 15px;
+  max-width: 70%;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-msg.bot p {
+  background-color: #f1f0f0;
+  color: #000;
+  border-top-left-radius: 0;
+}
+
+.chat-msg.user p {
+  background-color: #d1e7dd;
+  color: #000;
+  border-top-right-radius: 0;
 }
     
     
@@ -246,11 +261,11 @@
         { msg: "Hi, thank you for showing interest. Kindly answer all the recruiter's questions to successfully apply for the job." },
         { msg: "Enter your full name:", input: "text", name: "name" },
         { msg: "Enter your email address:", input: "email", name: "email" },
-        { msg: "Enter your mobile number:", input: "text", name: "mobile" },
+        { msg: "Enter your mobile number:", input: "text", name: "phone" },
         { msg: "Upload your resume (PDF):", input: "file", name: "resume" },
         { msg: "Are you an experienced professional or a fresher?", input: "radio", name: "experience", options: ["Experienced", "Fresher"] },
         { msg: "Have you applied for a role in our company before?", input: "radio", name: "appliedBefore", options: ["Yes", "No"] },
-        { msg: "Thank you! You have successfully completed the process. 😊" }
+        { msg: "Thank you! You have successfully completed all the steps.       Click 'submit' to apply your application successfully. " }
     ];
 
     let current = 0;
@@ -269,7 +284,7 @@
 
         // Add chatbot message
         const msgWrapper = document.createElement('div');
-        msgWrapper.classList.add('chat-msg');
+msgWrapper.classList.add('chat-msg', 'bot'); // Make sure bot class is added
 
         if (q.msg) {
             const message = document.createElement("p");
@@ -280,10 +295,14 @@
         container.appendChild(msgWrapper);
         container.scrollTop = container.scrollHeight;
 
-        // Show input after a short delay
         setTimeout(() => {
+            // 🔥 Clear previously added input and button
+            const existingInputs = document.querySelectorAll('.chat-input');
+            existingInputs.forEach(el => el.remove());
+
             const inputDiv = document.createElement('div');
             inputDiv.classList.add('chat-input');
+
 
             if (q.input === 'radio') {
                 q.options.forEach(option => {
@@ -315,11 +334,25 @@
             nextBtn.className = 'next-btn';
 
             if (current === questions.length - 1) {
-                nextBtn.innerText = 'Close';
-                nextBtn.onclick = () => {
-                    document.getElementById("chatbot").classList.add('hidden');
-                };
-            } else {
+            	nextBtn.innerText = 'Submit';
+            	nextBtn.onclick = () => {
+            	    const form = document.getElementById("applicationForm");
+            	    form.querySelector('input[name="name"]').value = formData.name || '';
+            	    form.querySelector('input[name="email"]').value = formData.email || '';
+            	    form.querySelector('input[name="phone"]').value = formData.phone || '';
+            	    form.querySelector('input[name="resume"]').value = formData.resume || '';
+            	    form.querySelector('input[name="experience"]').value = formData.experience || '';
+            	    form.querySelector('input[name="appliedBefore"]').value = formData.appliedBefore || '';
+
+            	    // Submit the form to the servlet
+            	    form.submit();
+
+            	    // Optional: hide chatbot
+            	    document.getElementById("chatbot").classList.add('hidden');
+            	};
+
+            }
+ else {
                 nextBtn.innerText = 'Next';
                 nextBtn.onclick = () => handleNext(q);
             }
@@ -360,12 +393,42 @@
         if (q.name) {
             formData[q.name] = value;
         }
+        
+        if (current > 0) {
+            const container = document.getElementById('chat-content');
+            const answerMsg = document.createElement('div');
+            answerMsg.classList.add('chat-msg', 'user');
+
+            const response = document.createElement('p');
+            
+
+            if (q.input === 'file') {
+                response.textContent = value;
+            } else {
+                response.textContent = value;
+            }
+
+            answerMsg.appendChild(response);
+            container.appendChild(answerMsg);
+            container.scrollTop = container.scrollHeight;
+        }
+
 
         current++;
         showQuestion();
     }
 
 </script>
+
+<form id="applicationForm" action="submitApplication" method="post" style="display:none;">
+    <input type="hidden" name="name">
+    <input type="hidden" name="email">
+    <input type="hidden" name="phone">
+    <input type="hidden" name="resume">
+    <input type="hidden" name="experience">
+    <input type="hidden" name="appliedBefore">
+</form>
+
     
 </body>
 
