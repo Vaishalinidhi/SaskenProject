@@ -35,6 +35,7 @@
         }
     </script>
 </head>
+
 <body>
 <div class="login-container">
     <div class="top-right-applicant">
@@ -51,5 +52,6 @@
         <button type="submit" class="login-btn">Login</button>
     </form>
 </div>
+
 </body>
 </html>
