@@ -146,7 +146,10 @@
     </div>
     <div class="green-note"><%= applicationCount %> people have applied.</div>
 
-    <a href="view_all.jsp" class="apply-btn">View All Details</a>
+   
+    <a href="viewApplicants" class="apply-btn"><button>View All</button></a>
+    
+    
 </div>
 
 </body>
