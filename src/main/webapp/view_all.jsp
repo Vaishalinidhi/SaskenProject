@@ -5,6 +5,9 @@
 <head>
     <title>All Applicants</title>
     <style>
+        body {
+            background: #f9f9f9;
+        }
         .card {
             width: 400px;
             margin: 20px auto;
@@ -23,18 +26,28 @@
         .buttons {
             margin-top: 12px;
         }
-        .buttons button {
+        .buttons button, .status-box {
             margin-right: 10px;
             padding: 6px 12px;
             border: none;
             border-radius: 6px;
+            font-size: 15px;
             cursor: pointer;
+            display: inline-block;
         }
         .select-btn {
             background-color: #27ae60;
             color: white;
         }
         .reject-btn {
+            background-color: #c0392b;
+            color: white;
+        }
+        .status-selected {
+            background-color: #27ae60;
+            color: white;
+        }
+        .status-rejected {
             background-color: #c0392b;
             color: white;
         }
@@ -46,10 +59,11 @@
     <%
         List<Map<String, String>> applicants = (List<Map<String, String>>) request.getAttribute("applicants");
         if (applicants != null && !applicants.isEmpty()) {
+            int idx = 1;
             for (Map<String, String> app : applicants) {
     %>
         <div class="card">
-            <h3>Applicant <%= app.get("id") %></h3>
+            <h3>Applicant <%= idx %></h3>
             <div class="field">Name: <%= app.get("name") %></div>
             <div class="field">Email: <%= app.get("email") %></div>
             <div class="field">Phone: <%= app.get("phone") %></div>
@@ -58,11 +72,12 @@
             <div class="field">Applied Before: <%= app.get("appliedBefore") %></div>
 
             <div class="buttons">
-                <button class="select-btn">Select for Interview</button>
-                <button class="reject-btn">Reject</button>
+                <button class="select-btn" data-applicant-idx="<%= idx %>">Select for Interview</button>
+                <button class="reject-btn" data-applicant-idx="<%= idx %>">Reject</button>
             </div>
         </div>
     <%
+                idx++;
             }
         } else {
     %>
@@ -70,5 +85,28 @@
     <%
         }
     %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.select-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.card');
+                const applicantIdx = button.getAttribute('data-applicant-idx');
+                const buttonsDiv = card.querySelector('.buttons');
+                buttonsDiv.innerHTML = `<span class="status-box status-selected">Applicant ${applicantIdx} has selected for interview</span>`;
+            });
+        });
+
+        document.querySelectorAll('.reject-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.card');
+                const applicantIdx = button.getAttribute('data-applicant-idx');
+                const buttonsDiv = card.querySelector('.buttons');
+                buttonsDiv.innerHTML = `<span class="status-box status-rejected">Applicant ${applicantIdx} is rejected</span>`;
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
